@@ -1,28 +1,31 @@
-
-import org.jboss.resteasy.plugins.guice.GuiceResteasyBootstrapServletContextListener;
 import jaxrs.ClientErrorExceptionMapper;
 import jaxrs.HelloResource;
 import jaxrs.GsonMessageBodyHandler;
+import service.HelloWorld;
+import service.HelloWorldFI;
 import service.HelloWorldPL;
+import service.User;
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
+
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import javax.inject.Singleton;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.FilterHolder;
-import service.HelloWorld;
-import service.HelloWorldFI;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+
+import org.jboss.resteasy.plugins.guice.GuiceResteasyBootstrapServletContextListener;
 import org.jboss.resteasy.plugins.guice.RequestScoped;
 import org.jboss.resteasy.plugins.guice.ext.RequestScopeModule;
 import org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
-import service.User;
+
+import javax.inject.Singleton;
+
 
 public class Main {
-
     public static void main(String[] args) throws Exception {
         Injector injector = Guice.createInjector(new HelloModule(args));
 
@@ -32,12 +35,14 @@ public class Main {
 
         Server server = new Server(8080);
         ServletContextHandler servletHandler = new ServletContextHandler();
-        servletHandler.addEventListener(injector.getInstance(GuiceResteasyBootstrapServletContextListener.class));
+        servletHandler.addEventListener(
+            injector.getInstance(GuiceResteasyBootstrapServletContextListener.class));
 
         ServletHolder sh = new ServletHolder(HttpServletDispatcher.class);
         servletHandler.setInitParameter("resteasy.role.based.security", "true");
-        servletHandler.addFilter(new FilterHolder(injector.getInstance(HelloFilter.class)), "/*", null);
-        //servletHandler.addServlet(DefaultServlet.class, "/*");
+        servletHandler.addFilter(
+            new FilterHolder(injector.getInstance(HelloFilter.class)), "/*", null);
+        // servletHandler.addServlet(DefaultServlet.class, "/*");
         servletHandler.addServlet(sh, "/*");
 
         server.setHandler(servletHandler);
@@ -46,9 +51,6 @@ public class Main {
     }
 
     private static class HelloModule extends RequestScopeModule {
-
-        private String[] args;
-
         public HelloModule(String[] args) {
             this.args = args;
         }
@@ -76,5 +78,7 @@ public class Main {
         public User provideUser() {
             return ResteasyProviderFactory.getContextData(User.class);
         }
+
+        private String[] args;
     }
 }

@@ -1,7 +1,11 @@
 package jaxrs;
 
+import service.HelloWorld;
+import service.User;
+
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -15,15 +19,11 @@ import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import service.HelloWorld;
-import service.User;
+
 
 @Path("/")
 @Singleton
 public class HelloResource {
-
-    @Inject HelloWorld helloWord;
-
     @GET
     @Path("/hello.json")
     @Produces(MediaType.APPLICATION_JSON)
@@ -42,9 +42,9 @@ public class HelloResource {
     @GET
     @Path("/async-hello")
     @Produces(MediaType.TEXT_PLAIN)
-    public void getAsyncData(@Suspended final AsyncResponse response,
+    public void getAsyncData(
+            @Suspended final AsyncResponse response,
             @QueryParam("d") @DefaultValue("1") final int delaySec) throws IOException {
-
         response.setTimeout(6, TimeUnit.SECONDS);
 
         new Thread(new Runnable() {
@@ -52,12 +52,10 @@ public class HelloResource {
             public void run() {
                 try {
                     Thread.sleep(delaySec * 1000);
-
                     if (!response.isSuspended()) {
                         System.out.println("Async response is not suspended");
                         return;
                     }
-
                     if (!response.resume(Response.ok(helloWord.say()).build())) {
                         System.out.println("Async response not resumed");
                     }
@@ -69,9 +67,6 @@ public class HelloResource {
     }
 
     public static class Data {
-
-        private String text;
-
         public Data(String data) {
             this.text = data;
         }
@@ -79,5 +74,9 @@ public class HelloResource {
         public String getData() {
             return text;
         }
+
+        private final String text;
     }
+
+    @Inject HelloWorld helloWord;
 }

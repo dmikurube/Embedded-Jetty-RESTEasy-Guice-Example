@@ -1,13 +1,7 @@
 package service;
 
-/**
- *
- * @author szymon
- */
+
 public class User {
-
-    public String name;
-
     public User(String name) {
         this.name = name;
     }
@@ -16,4 +10,6 @@ public class User {
     public String toString() {
         return name;
     }
+
+    public final String name;
 }
