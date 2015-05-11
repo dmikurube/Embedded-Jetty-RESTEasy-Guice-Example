@@ -1,6 +1,4 @@
-import jaxrs.ClientErrorExceptionMapper;
 import jaxrs.HelloResource;
-import jaxrs.GsonMessageBodyHandler;
 import service.HelloWorld;
 import service.HelloWorldFI;
 import service.HelloWorldPL;
@@ -68,9 +66,7 @@ public class Main {
         @Override
         protected void configure() {
             super.configure();
-            bind(GsonMessageBodyHandler.class);
             bind(HelloResource.class);
-            bind(ClientErrorExceptionMapper.class);
         }
 
         @Provides

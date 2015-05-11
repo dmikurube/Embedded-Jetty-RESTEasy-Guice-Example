@@ -3,6 +3,9 @@ package jaxrs;
 import service.HelloWorld;
 import service.User;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -67,10 +70,12 @@ public class HelloResource {
     }
 
     public static class Data {
-        public Data(String data) {
+        @JsonCreator
+        public Data(@JsonProperty("hoge") String data) {
             this.text = data;
         }
 
+        @JsonProperty("hoge")
         public String getData() {
             return text;
         }
