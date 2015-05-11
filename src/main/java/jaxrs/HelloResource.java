@@ -1,7 +1,6 @@
 package jaxrs;
 
 import service.HelloWorld;
-import service.User;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -32,41 +31,6 @@ public class HelloResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Data getJsonMessage() {
         return new Data(helloWord.say());
-    }
-
-    @GET
-    @Path("/hello")
-    @Produces(MediaType.TEXT_PLAIN)
-    @RolesAllowed("user")
-    public String getTxtMessage(@Context User user) {
-        return helloWord.say() + " " + user;
-    }
-
-    @GET
-    @Path("/async-hello")
-    @Produces(MediaType.TEXT_PLAIN)
-    public void getAsyncData(
-            @Suspended final AsyncResponse response,
-            @QueryParam("d") @DefaultValue("1") final int delaySec) throws IOException {
-        response.setTimeout(6, TimeUnit.SECONDS);
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(delaySec * 1000);
-                    if (!response.isSuspended()) {
-                        System.out.println("Async response is not suspended");
-                        return;
-                    }
-                    if (!response.resume(Response.ok(helloWord.say()).build())) {
-                        System.out.println("Async response not resumed");
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        }).start();
     }
 
     public static class Data {
