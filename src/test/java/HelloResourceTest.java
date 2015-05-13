@@ -34,6 +34,6 @@ public class HelloResourceTest extends JettyGuiceRestEasyTest {
         when(helloWorld.say()).thenReturn("Czesc");
 
         Client client = ClientBuilder.newClient();
-        assertEquals("Czesc Kalle", client.target("http://localhost:8080").path("/hello").request().get(String.class));
+        assertEquals("{\"hoge\":\"Czesc\"}", client.target("http://localhost:8080").path("/hello.json").request().get(String.class));
     }
 }
